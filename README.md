@@ -25,6 +25,7 @@ npm run dev
 ```
 
 API runs on `http://localhost:3000`. Health check: `GET /health`.
+Interactive API docs (Swagger UI): `http://localhost:3000/api-docs`
 
 ## Testing
 
@@ -56,5 +57,5 @@ Send the token as `Authorization: Bearer <token>` on protected routes.
 - [x] Auth (JWT) + user registration/login
 - [x] Cart endpoints (add/remove/update items)
 - [x] Unit tests (Jest) for the order transaction — including a forced-failure test
-- [ ] Swagger/OpenAPI docs
+- [x] Swagger/OpenAPI docs
 - [x] Seed script with sample categories/products for demo purposes

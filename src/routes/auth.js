@@ -14,6 +14,27 @@ function signToken(user) {
   );
 }
 
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password, name]
+ *             properties:
+ *               email: { type: string, format: email }
+ *               password: { type: string, format: password }
+ *               name: { type: string }
+ *     responses:
+ *       201: { description: User created, returns a JWT }
+ *       409: { description: Email already registered }
+ */
 // POST /api/auth/register
 router.post('/register', async (req, res, next) => {
   try {
@@ -39,6 +60,26 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Log in and receive a JWT
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password]
+ *             properties:
+ *               email: { type: string, format: email }
+ *               password: { type: string, format: password }
+ *     responses:
+ *       200: { description: Returns a JWT }
+ *       401: { description: Invalid email or password }
+ */
 // POST /api/auth/login
 router.post('/login', async (req, res, next) => {
   try {

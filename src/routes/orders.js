@@ -3,6 +3,34 @@ const prisma = require('../prismaClient');
 const requireAuth = require('../middleware/requireAuth');
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/orders:
+ *   post:
+ *     summary: Place an order (transactional — rolls back entirely on insufficient stock)
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [items]
+ *             properties:
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     productId: { type: string }
+ *                     quantity: { type: integer }
+ *     responses:
+ *       201: { description: Order created, inventory decremented }
+ *       401: { description: Missing or invalid token }
+ *       409: { description: Insufficient stock — entire transaction rolled back }
+ */
 // POST /api/orders  (requires auth)
 // body: { items: [{ productId, quantity }] }
 // userId now comes from the verified JWT (req.user.id), never from the request body.
@@ -67,6 +95,24 @@ router.post('/', requireAuth, async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/orders/{id}:
+ *   get:
+ *     summary: Get an order by id
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200: { description: Order found }
+ *       401: { description: Missing or invalid token }
+ *       404: { description: Order not found }
+ */
 router.get('/:id', requireAuth, async (req, res, next) => {
   try {
     const order = await prisma.order.findUnique({

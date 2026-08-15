@@ -15,6 +15,18 @@ async function getOrCreateCart(userId) {
   return cart;
 }
 
+/**
+ * @swagger
+ * /api/cart:
+ *   get:
+ *     summary: Get the current user's cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200: { description: The user's cart with items }
+ *       401: { description: Missing or invalid token }
+ */
 // GET /api/cart
 router.get('/', async (req, res, next) => {
   try {
@@ -29,6 +41,28 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/cart/items:
+ *   post:
+ *     summary: Add an item to the cart (increments quantity if already present)
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [productId, quantity]
+ *             properties:
+ *               productId: { type: string }
+ *               quantity: { type: integer }
+ *     responses:
+ *       201: { description: Item added }
+ *       404: { description: Product not found }
+ */
 // POST /api/cart/items   body: { productId, quantity }
 router.post('/items', async (req, res, next) => {
   try {
@@ -55,6 +89,32 @@ router.post('/items', async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/cart/items/{productId}:
+ *   put:
+ *     summary: Update the quantity of an item in the cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [quantity]
+ *             properties:
+ *               quantity: { type: integer }
+ *     responses:
+ *       200: { description: Item updated }
+ *       404: { description: Item not in cart }
+ */
 // PUT /api/cart/items/:productId   body: { quantity }
 router.put('/items/:productId', async (req, res, next) => {
   try {
@@ -76,6 +136,23 @@ router.put('/items/:productId', async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/cart/items/{productId}:
+ *   delete:
+ *     summary: Remove an item from the cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       204: { description: Item removed }
+ *       404: { description: Item not in cart }
+ */
 // DELETE /api/cart/items/:productId
 router.delete('/items/:productId', async (req, res, next) => {
   try {
