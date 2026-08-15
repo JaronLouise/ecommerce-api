@@ -3,8 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 
+const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
+const cartRoutes = require('./routes/cart');
 
 const app = express();
 
@@ -14,8 +16,10 @@ app.use(express.json());
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
+app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
 
 // Centralized error handler — keep controllers throwing, not res-handling
 app.use((err, req, res, next) => {
@@ -24,6 +28,8 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`API running on port ${PORT}`));
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`API running on port ${PORT}`));
+}
 
 module.exports = app;

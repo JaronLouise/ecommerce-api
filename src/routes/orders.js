@@ -1,15 +1,18 @@
 const express = require('express');
 const prisma = require('../prismaClient');
+const requireAuth = require('../middleware/requireAuth');
 const router = express.Router();
 
-// POST /api/orders
-// body: { userId, items: [{ productId, quantity }] }
+// POST /api/orders  (requires auth)
+// body: { items: [{ productId, quantity }] }
+// userId now comes from the verified JWT (req.user.id), never from the request body.
 //
 // This is the showcase endpoint: placing an order touches inventory, order,
 // and order_items together. If stock is insufficient for ANY item, the whole
 // transaction rolls back — no partial order, no over-deducted inventory.
-router.post('/', async (req, res, next) => {
-  const { userId, items } = req.body;
+router.post('/', requireAuth, async (req, res, next) => {
+  const userId = req.user.id;
+  const { items } = req.body;
 
   if (!items || items.length === 0) {
     return res.status(400).json({ error: 'Order must contain at least one item' });
@@ -64,7 +67,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', requireAuth, async (req, res, next) => {
   try {
     const order = await prisma.order.findUnique({
       where: { id: req.params.id },
